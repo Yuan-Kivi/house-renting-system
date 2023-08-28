@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>BDIC-HTS</title>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+  <style>
+    #div_pic_hide:hover{
+      cursor: hand;
+    }
+    #div_pic{
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="ui secondary menu" style="padding-left: 20px;padding-right: 20px">
+  <div class="item header image">
+    <img src="http://localhost:8080/images/logo.png" alt="" style="width: 100px">
+  </div>
+  <a href="/user/toMain" class="item" th:text="${user.getUserId()}==1?'Rent Management':'Rent'"></a>
+  <a href="/user/toBuy" class="item" th:text="${user.getUserId()}==1?'Sell Management':'Buy'">Buy</a>
+  <a href="/user/toCreate" class="active item" th:style="'display:'+@{(${user.getUserId()}==1?'none':'inline')}+''">Post</a>
+  <a href="/user/toLike" class="item" th:style="'display:'+@{(${user.getUserId()}==1?'none':'inline')}+''">Like</a>
+  <div class="item right">
+    <div class="ui avatar image" style="margin-right: 20px">
+      <img th:src="${user.getAvatar()}" alt="">
+    </div>
+    <div class="ui text" >
+      <a href="/user/person" th:text="${user.getUsername()}" th:id="${user.getUserId()}"></a>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="ui container" style="padding: 20px">
+  <div class="ui segment" style="padding: 20px">
+    <div class="ui header dividing">Add House Information</div>
+      <fieldset style="padding: 20px">
+      <div class="ui form">
+        <div class="required inline field" id="div_intro">
+          <labal>Details</labal>
+          <textarea id="intro" style="width: 600px;height: 100px"></textarea>
+        </div>
+        <div class="required inline field" id="div_add">
+          <div class="ui fields">
+            <labal>Destination</labal>
+            <div class="field" style="margin-left: 7px">
+
+              <select id="prov" class="ui dropdown" onchange="showCity(this)">
+                <option value="-1">Please select a state</option>
+              </select>
+            </div>
+            <div class="field">
+
+              <select id="city" class="ui dropdown" onchange="showCountry(this)">
+                <option value="-1">Please select a city</option>
+              </select>
+            </div>
+            <div class="field">
+
+              <select id="country" class="ui dropdown" onchange="selecCountry(this)">
+                <option value="-1">Please select a district</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="required inline field" id="div_loc">
+          <labal>Destination</labal>
+          <input type="text" id="loc" style="width: 600px" placeholder="Avenue/Street/Community">
+        </div>
+        <div class="required inline field" id="div_area">
+          <labal>Area</labal>
+          <input type="number" id="area" style="width: 600px" placeholder="square meter">
+        </div>
+        <div class="required inline field" id="div_money">
+          <labal>Price</labal>
+          <input type="number" id="money" style="width: 600px" placeholder="dollar/month or dollar/house">
+        </div>
+        <div class="required inline field" >
+          <labal>Furniture</labal>
+          <select multiple id="furn" class="ui dropdown" style="width: 600px">
+            <option value="refrigerator ">refrigerator </option>
+            <option value="washing machine ">washing machine </option>
+            <option value="television ">television </option>
+            <option value="cooking stove ">cooking stove </option>
+            <option value="exhaust hood ">exhaust hood </option>
+            <option value="bathtub ">bathtub </option>
+            <option value="cabinet ">cabinet </option>
+          </select>
+        </div>
+        <div class="required inline field" >
+          <labal>Round</labal>
+          <select multiple id="around" class="ui dropdown" style="width: 600px">
+            <option value="subway ">subway </option>
+            <option value="park ">park </option>
+            <option value="supermarket ">supermarket </option>
+            <option value="cinema ">cinema </option>
+            <option value="lake ">lake </option>
+            <option value="high-speed train ">high-speed train </option>
+            <option value="airport ">airport </option>
+            <option value="landscape ">landscape </option>
+            <option value="school ">school </option>
+          </select>
+        </div>
+        <div class="required inline field">
+          <labal>Type</labal>
+          <select id="houseType" class="ui dropdown" style="width: 600px">
+            <option value="Rent">Rent</option>
+            <option value="Sell">Sell</option>
+          </select>
+        </div>
+        <div class="required inline field">
+          <labal>Forwards</labal>
+          <select id="direction" class="ui dropdown" style="width: 600px">
+            <option value="East">East</option>
+            <option value="West">West</option>
+            <option value="South">South</option>
+            <option value="North">North</option>
+          </select>
+        </div>
+        <div class="required inline field">
+          <labal>Rooms</labal>
+          <select id="room" class="ui dropdown" style="width: 600px">
+            <option value="One room">One room</option>
+            <option value="Two rooms">Two rooms</option>
+            <option value="Three rooms">Three rooms</option>
+            <option value="Four rooms">Four rooms</option>
+          </select>
+        </div>
+        <div class="required inline field" id="div_pre">
+          <labal>Deposit</labal>
+          <select id="pre" class="ui dropdown" style="width: 600px">
+            <option value="Bet one pays three|Bet one pays one">Bet one pays three|Bet one pays one</option>
+            <option value="Bet one pays three">Bet one pays three</option>
+            <option value="Bet one pays one">Bet one pays one</option>
+          </select>
+        </div>
+        <div class="required inline field" id="div_pic">
+          <labal>Picture</labal>
+          <input type="file" id="files" style="width: 600px" multiple accept="image/*">
+        </div>
+        <div class="required inline field" id="div_pic_hide">
+          <labal>Picture</labal>
+          <input type="button" id="file2" value="Browse..."   style="width: 75px" onclick="document.getElementById('files').click()">
+          <span id="fileMessage">no file</span>
+        </div>
+        <div class="right field">
+          <input class="ui basic button" type="button" onclick="Add();" value="ADD">
+        </div>
+      </div>
+      </fieldset>
+    </div>
+</div>
+
+</body>
+<script src="../js/city.js"></script>
+<script src="../js/method.js"></script>
+<script src="../js/Person.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+<script>
+  let text=""
+  let around=""
+  $('select.dropdown').dropdown();
+  $("#furn").change(function(){
+    text=$("#furn option:selected").text()
+  })
+  $("#around").change(function(){
+    around=$("#around option:selected").text()
+  })
+  $("#houseType").change(function(){
+    let houseType=$("#houseType option:selected").text()
+    if (houseType==='Sell'){
+      $("#div_pre").toggleClass("disabled")
+      console.log("run");
+    }else {
+      $("#div_pre").removeClass("disabled");
+    }
+    console.log(houseType)
+  })
+  function Add(){
+    const intro = $("#intro").val();
+    if(check(intro,"","#div_intro"))return;
+
+    const add = $("#prov option:selected").text()+"."+$("#city option:selected").text()+"."+$("#country option:selected").text();
+    if(check($("#country").val(),"-1","#div_add"))return;
+
+    const loc = $("#loc").val();
+    if(check(loc,"","#div_loc"))return;
+
+    const area = $("#area").val();
+    if(check(area,"","#div_area"))return;
+
+    const money = $("#money").val();
+    if(check(money,"","#div_money"))return;
+
+    const fileInput = document.getElementById("files").files;
+    const length = fileInput.length
+    if(check(length,0,"#div_pic"))return;
+    const formData=new FormData();
+    for (let i = 0; i < length; i++) {
+      formData.append("files",fileInput[i]);
+    }
+    formData.append("introduction",intro);
+    formData.append("address",add);
+    formData.append("loc",loc);
+    formData.append("money",money);
+    formData.append("area",area);
+    formData.append("furniture",text);
+    formData.append("around",around);
+    formData.append("pre",$("#pre").val());
+    formData.append("houseType",$("#houseType").val());
+    formData.append("direction",$("#direction").val());
+    formData.append("room",$("#room").val());
+    $.ajax({
+      type: "POST",
+      url: '/house/add',
+      data: formData,
+      processData: false,
+      dataType:'json',
+      contentType: false,
+      cache: false,
+      success: function(data){
+        let mess="";
+        if (data==1){
+          mess="success";
+        }else {
+          mess="In the banned status, post failed";
+        }
+        alert(mess);
+        setTimeout(function(){
+          window.close();
+        },3000);
+      }
+    });
+  }
+
+  function check(str1,compare,str2) {
+    if(str1===compare){
+      if(!($(str2).hasClass("error"))){
+        $(str2).toggleClass("error");
+      }
+      return true;
+    }
+    else{
+      if(($(str2).hasClass("error"))){
+        $(str2).removeClass("error");
+      }
+    }
+    return false;
+  }
+</script>
+<script>
+  $('#files').on('change',function (e){
+    let number = e.currentTarget.files.length
+    if(number>1){
+      $('#fileMessage').text(number + ' files were selected')
+    }else {
+      let path = $('#files').val()
+      console.log($('#files'))
+      $('#fileMessage').text(path)
+    }
+  })
+
+</script>
+</html>

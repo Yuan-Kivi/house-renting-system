@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BDIC-HTS Register</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+</head>
+<style>
+    body {
+        background-image: url("/images/house.jpg");
+        background-repeat: repeat;
+        background-size: cover;
+    }
+</style>
+<body>
+<div class="ui grid" style="padding-left: 450px;padding-right: 20px">
+    <div class="three wide column"></div>
+    <div class="ten wide column">
+        <div style="height: 30%;visibility: hidden"></div>
+        <div class="ui center aligned segment" style="background-color: rgba(255,255,255,0.3);width: 350px" >
+            <form class="ui form">
+                <div class="ui small image">
+                    <img src="/images/logo.png" width="70" height="70" style="position:relative;left:40px;">
+                </div>
+                <div class="inline field" id="div_username">
+                    <div class="ui labeled icon input">
+                        <i class="icon user"></i>
+                        <input type="text" id="username" placeholder="user name"
+                               style="background-color:rgb(0,0,0,0.3) ;border:1px solid #F0F0F0;">
+                    </div>
+                </div>
+                <div class="inline field" id="div_password">
+                    <div class="ui labeled icon input">
+                        <i class="icon lock"></i>
+                        <input type="password" id="password" placeholder="password"
+                               style="background-color:rgb(0,0,0,0.3);border:1px solid #F0F0F0;">
+                    </div>
+                </div>
+
+                <div class="inline field">
+                    <div class="ui labeled icon input" id="div_confirm">
+                        <i class="icon shield alternate"></i>
+                        <input type="password" id="confirm" placeholder="confirm password"
+                               style="background-color:rgb(0,0,0,0.3);border:1px solid #F0F0F0;">
+                    </div>
+                </div>
+
+                <div class="inline field">
+                    <div class="ui labeled icon input" id="div_phone">
+                        <i class="icon phone alternate"></i>
+                        <input type="number" id="phone" placeholder="mobile phone"
+                               style="background-color:rgb(0,0,0,0.3);border:1px solid #F0F0F0;">
+                    </div>
+                </div>
+
+                <div class="inline field">
+                    <div class="ui labeled icon input" id="div_email">
+                        <i class="icon mail alternate"></i>
+                        <input type="email" id="email" placeholder="email"
+                               style="background-color:rgb(0,0,0,0.3);border:1px solid #F0F0F0;">
+                    </div>
+                </div>
+
+
+                <div class="inline field" >
+                    <div class="inline fields" style="margin-left: 30%;margin-right: 27%">
+                        <div class="field" >
+                            <div class="ui radio checkbox">
+                                <input type="radio" name="userType" checked="" value="0">
+                                <label>Personal</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" name="userType" value="1">
+                                <label>Agency</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="inline field" id="div_head">
+                    <input type="file" id="upHead" style="display: none" accept="image/*" onchange="upLoadHead()">
+                    <label for="upHead" class="ui image">
+                        <img src="/images/upHead01.png" id="head" style="width: 200px">
+                    </label>
+                </div>
+
+                <button class="ui animated basic button" type="button" onclick="Reg();">
+                    <div class="visible content">REGIST</div>
+                    <div class="hidden content">
+                        <i class="right plus icon"></i>
+                    </div>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+<script type="text/javascript">
+    $('select.dropdown').dropdown();
+    function Reg() {
+        const name = $("#username").val();
+        if(name==""){
+            if(!($("#div_username").hasClass("error"))){
+                $("#div_username").toggleClass("error");
+            }
+            return;
+        }
+        const pass = $("#password").val();
+        if(pass==""){
+            if(!($("#div_password").hasClass("error"))){
+                $("#div_password").toggleClass("error");
+            }
+            return;
+        }
+        const confirm = $("#confirm").val();
+        if(confirm=="" || confirm!=pass){
+            if(!($("#div_confirm").toggleClass("error"))){
+                $("#div_confirm").toggleClass("error");
+            }
+            return;
+        }
+
+        const cell = $("#phone").val();
+        if(pass==""){
+            if(!($("#div_phone").hasClass("error"))){
+                $("#div_phone").toggleClass("error");
+            }
+            return;
+        }
+
+        const email = $("#email").val();
+        if(pass==""){
+            if(!($("#div_email").hasClass("error"))){
+                $("#div_email").toggleClass("error");
+            }
+            return;
+        }
+
+        const head = $("#head").attr("src");
+        if(head=="../images/upHead.png"){
+            if(!($("#div_head").hasClass("required"))){
+                $("#div_head").toggleClass("required");
+            }
+            return;
+        }
+        const userType=$("input:radio:checked").val();
+        const formData = new FormData();
+        formData.append("username",name);
+        formData.append("password",pass);
+        formData.append("cell",cell);
+        formData.append("email",email);
+        formData.append("userType",userType);
+        formData.append("avatar",head);
+        $.ajax({
+            type: "POST",
+            url: '/user/register',
+            data: formData,
+            processData: false,
+            dataType:'json',
+            contentType: false,
+            cache: false,
+            success:function (data){
+                window.location.replace("/user/toMain");
+            }
+        });
+    }
+    function upLoadHead(){
+        const fileInput = document.getElementById("upHead");
+        const file = fileInput.files[0];
+        console.log("run")
+        const formData=new FormData();
+        formData.append("image",file);
+        $.ajax({
+            type: "POST",
+            url: '/file/upImage',
+            data: formData,
+            processData: false,
+            dataType:'json',
+            contentType: false,
+            cache: false,
+            success: function(data){
+                $("#head").attr('src',data.url);
+                console.log("run2")
+            }
+        });
+    }
+</script>
+</html>

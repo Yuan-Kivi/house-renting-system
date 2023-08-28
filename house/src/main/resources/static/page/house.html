@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="referrer" content="no-referrer">
+    <title>Details</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+</head>
+<body>
+
+<div class="ui secondary menu" style="padding-left: 20px;padding-right: 20px">
+    <div class="item header image">
+        <img src="http://localhost:8080/images/logo.png" alt="" style="width: 100px">
+    </div>
+    <a href="/user/toMain" class="item" th:text="${user.getUserId()}==1?'Rent Management':'Rent'"></a>
+    <a href="/user/toBuy" class="item" th:text="${user.getUserId()}==1?'Sell Management':'Buy'">Buy</a>
+    <a href="/admin/manager" class="item" th:style="'display:'+@{(${user.getUserId()}!=1?'none':'inline')}+''">User management</a>
+    <a href="/user/toCreate" class="item" th:style="'display:'+@{(${user.getUserId()}==1?'none':'inline')}+''">Post</a>
+    <a href="/user/toLike" class="item" th:style="'display:'+@{(${user.getUserId()}==1?'none':'inline')}+''">Like</a>
+    <div class="item right">
+        <div class="ui avatar image" style="margin-right: 20px">
+            <img th:src="${user.getAvatar()}" alt="">
+        </div>
+        <div class="ui text" >
+            <a href="/user/person" th:text="${user.getUsername()}" th:id="${user.getUserId()}"></a>
+        </div>
+    </div>
+
+</div>
+<div class="ui container" style="margin: 50px" id="get_id"
+     th:data_id="${page.getHouse().getHouseId()}" th:data_beUserId="${page.getHouse().getUserId()}">
+    <div class="ui center aligned segment" style="height: 530px">
+        <div style="margin-top:20px;">
+            <div class="ui vertical animated button" onclick="Change(-1)">
+                <div class="hidden content">PRE</div>
+                <div class="visible content">
+                    <i class="arrow left icon"></i>
+                </div>
+            </div>
+            <div class="ui vertical animated button" onclick="Change(1)" style="margin-left: 20px">
+                <div class="hidden content">NEXT</div>
+                <div class="visible content">
+                    <i class="arrow right icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="ui image" style="margin-top: 40px;" th:each="img,ind:${page.getPics()}">
+            <img class="img-slide"  th:style="'background-size:contain;width:600px;height:375px;display:'+ @{(${ind.index}==0?'inline':'none')}+''" th:src="${img.getUrl()}">
+        </div>
+    </div>
+    <div class="ui segment" style="padding-left: 100px">
+        <h4 class="ui header">Poster</h4>
+        <div class="sub header" th:text="${page.getUser().getUsername()}"></div>
+        <h4 class="ui header">User Type</h4>
+        <div class="sub header" th:text="${page.getUser().getTypeName()}"></div>
+        <h4 class="ui header">Post Date</h4>
+        <div class="sub header" th:text="${page.getHouse().getPubDate()}"></div>
+        <h4 class="ui header">Destination</h4>
+        <div class="sub header" th:text="${page.getHouse().getAddress()}+'-'+${page.getHouse().getLoc()}"></div>
+        <h4 class="ui header" >Round</h4>
+        <div class="sub header" th:text="${page.getHouse().getAround()}"></div>
+        <h4 class="ui header" >Furniture</h4>
+        <div class="sub header" th:text="${page.getHouse().getFurniture()}"></div>
+        <h4 class="ui header" th:text="@{(${page.getHouse().getHouseType()}=='Sell'?'Price':'Price')}"></h4>
+        <div class="sub header" th:text="${page.getHouse().getMoney()}+@{(${page.getHouse().getHouseType()}=='Sell')?'W':'/month'}"></div>
+        <h4 class="ui header" th:hidden="${page.getHouse().getHouseType()}=='Sell'">Deposit</h4>
+        <div class="sub header" th:hidden="${page.getHouse().getHouseType()}=='Sell'"
+             th:text="${page.getHouse().getPre()}"></div>
+        <h4 class="ui header">Area</h4>
+        <div class="sub header" th:text="${page.getHouse().getArea()}+'m²'"></div>
+        <h4 class="ui header">Details</h4>
+        <div class="sub header" th:text="${page.getHouse().getIntroduction()}"></div>
+    </div>
+    <div class="ui inverted green button" onclick="doSave()" id="sign" style="margin-bottom: 50px"
+         th:style="'display:'+@{((${page.getHouse().getUserId}==${user.getUserId()} or ${user.getUserId()}==1)?'none':'inline')}+''">CONTRACT</div>
+    <div class="ui inverted red button" onclick="Call()" style="margin-left: 20px;"
+         th:style="'display:'+@{((${page.getHouse().getUserId}==${user.getUserId()} or ${user.getUserId()}==1)?'none':'inline')}+''">REPORT HOUSE</div>
+    <div class="ui inverted red button" onclick="Call2()" style="margin-left: 20px;"
+         th:style="'display:'+@{((${page.getHouse().getUserId}==${user.getUserId()} or ${user.getUserId()}==1)?'none':'inline')}+''">REPORT LANDLORD</div>
+
+    <div class="ui inverted red button" th:data_houseId="${page.getHouse().getHouseId()}"
+         onclick="XIA(this.getAttribute('data_houseId'),'del')" style="margin-left: 20px;"
+         th:style="'display:'+@{(${user.getUserId()}!=1?'none':'inline')}+''">DELETE</div>
+
+    <div class="ui inverted red button" th:data_houseId2="${page.getHouse().getHouseId()}"
+         onclick="XIA(this.getAttribute('data_houseId2'),'xia')" style="margin-left: 20px;"
+         th:style="'display:'+@{(${user.getUserId()}!=1?'none':'inline')}+''">REMOVE</div>
+</div>
+
+<div class="ui small basic first modal">
+    <h2 class="header">House Rent Contract</h2>
+    <div class="content">
+        Party A:<span th:text="${page.getHouse().getUsername()}"></span><br/><br/>
+        Party B:<span th:text="${user.getUsername()}"></span><br/><br/>
+        According to the "Economic Contract Law of United State", "Urban Real Estate Management Law of United State" and other relevant laws and regulations, Party A and Party B shall, on the basis of equality, voluntariness and consensus, agree to purchase real estate from Party A by Party B. Sign this contract for mutual compliance and implementation.<br/><br/>
+        Article 1: Real estate situation<br/><br/>
+        Party B agrees to rent the premises owned by Party A in the<span th:text="${page.getHouse().getAddress()}+'-'+${page.getHouse().getLoc()}"></span>Owned real estate (residential) with a floor area of<span th:text="${page.getHouse().getArea()}"></span>square meters.<br/><br/>
+        Article 2: Real estate price<br/><br/>
+        The transaction price of the above target real estate is: USD<span th:text="${page.getHouse().getMoney()}"></span>Dollar/month. Party B shall pay from the lease date<br/><br/>
+        Article 3: Liability for breach of contract<br/><br/>
+        After the signing of the contract by both parties, if party B breaches the contract template for second-hand housing in the middle of the contract, it shall notify Party A in writing, and Party A shall return the paid (without interest) of Party B to Party B within 15 days, but the deposit for the purchase of the house shall be returned to Party A. Party all. If Party A breaches the second-hand housing sales and purchase agreement model halfway, it shall notify Party B in writing, and within 15 days from the date of default, it shall return to Party B the amount of the deposit paid by Party B and the amount already paid.<br/>
+    </div>
+    <div class="actions">
+        <button class="ui negative basic button">NO</button>
+        <button class="ui positive basic button">YES</button>
+    </div>
+</div>
+
+<div class="ui small basic second modal">
+    <h2 class="header">Report House</h2>
+    <div class="content">
+        <textarea class="ui text-area" id="intro" style="width: 600px;height: 100px;background-color:rgb(255,255,255,0.3);border:1px solid #F0F0F0;"></textarea>
+    </div>
+    <div class="actions">
+        <button class="ui negative basic button">CANCEL</button>
+        <button class="ui positive basic button">SUBMIT</button>
+    </div>
+</div>
+
+<div class="ui small basic third modal">
+    <h2 class="header">Report Landlord</h2>
+    <div class="content">
+        <textarea class="ui text-area" id="intro1" style="width: 600px;height: 100px;background-color:rgb(255,255,255,0.3);border:1px solid #F0F0F0;"></textarea>
+    </div>
+    <div class="actions">
+        <button class="ui negative basic button">CANCEL</button>
+        <button class="ui positive basic button">SUBMIT</button>
+    </div>
+</div>
+
+</body>
+<script src="../js/Person.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+<script type="text/javascript">
+    let index=0;
+    let a=document.getElementsByClassName("img-slide")
+    const len=a.length;
+    function ChangeImg() {
+        index++;
+        if(index>=len) index-=len;
+        if(index<0) index+=len;
+        for(let i=0;i<len;i++){
+            a[i].style.display='none';
+        }
+        a[index].style.display='inline';
+    }
+    function Change(m){
+        if(m==-1){
+            index-=2;
+        }
+        ChangeImg();
+    }
+    setInterval(ChangeImg,3000);
+
+    function doSave(){
+        $('.ui.first.modal').modal({blurring: true}).
+        modal({
+            onApprove: function(){
+                Sign();
+            },
+            onDeny: function (){
+                console.log("NO")
+            }
+        }).modal('show')
+    };
+
+    function Call(){
+        $('.ui.second.modal').modal({blurring: true}).
+        modal({
+            onApprove: function(){
+                Sub("repHouse",$("#intro").val());
+            },
+            onDeny: function (){
+                console.log("NO")
+            }
+        }).modal('show')
+    }
+
+    function Call2(){
+        $('.ui.third.modal').modal({blurring: true}).
+        modal({
+            onApprove: function(){
+                Sub("repLandlord",$("#intro1").val());
+            },
+            onDeny: function (){
+                console.log("NO")
+            }
+        }).modal('show')
+    }
+
+    function Sub(cType,message){
+        const elementById = document.getElementById("get_id");
+        const houseId = elementById.getAttribute('data_id');
+        const beUserId = elementById.getAttribute('data_beUserId');
+        let formData = new FormData();
+        formData.append("beUserId",beUserId);
+        formData.append("houseId",houseId);
+        formData.append("cType",cType);
+        formData.append("message",message);
+        $.ajax({
+            type: "POST",
+            url: '/com/add',
+            data: formData,
+            processData: false,
+            dataType:'json',
+            contentType: false,
+            cache: false,
+            success: function(data){
+                alert("REPORT Successful\nThanks for your feedback");
+                setTimeout(function(){
+                    window.close();
+                },3000);
+            }
+        });
+    }
+
+    function Sign(){
+        alert("CONTRACT SUCCESSFUL");
+        document.getElementById("sign").remove();
+        setTimeout(function(){
+            window.close();
+        },3000);
+    }
+
+    function XIA(houseId,opr){
+        let formData = new FormData();
+        formData.append("houseId",houseId);
+        formData.append("opr",opr);
+        $.ajax({
+            type: "POST",
+            url: '/admin/xia',
+            data: formData,
+            processData: false,
+            dataType:'json',
+            contentType: false,
+            cache: false,
+            success: function(data){
+                if(opr=='xia'){
+                    alert("REMOVE SUCCESSFUL");
+                    setTimeout(function(){
+                        window.close();
+                    },3000);
+                }else {
+                    window.location.replace("/user/toMain");
+                }
+            }
+        });
+    }
+</script>
+</html>

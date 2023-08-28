@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.house.dao.HouseDao">
+    <insert id="add" parameterType="com.house.entity.House" useGeneratedKeys="true" keyProperty="houseId">
+        insert into house (userId,username,introduction,around,pre,loc,direction,houseType,room,area,furniture,money,address,pubDate,status)
+        values(#{house.userId},#{house.username},#{house.introduction},#{house.around},#{house.pre},#{house.loc},#{house.direction},
+               #{house.houseType},#{house.room},#{house.area},#{house.furniture},#{house.money},#{house.address},now(),'verify')
+    </insert>
+    <update id="see">
+        update house set views = views +1 where houseId=#{houseId};
+    </update>
+    <update id="Opr">
+        update house set status=#{op} where houseId=#{houseId};
+    </update>
+    <delete id="delete">
+        delete from house where houseId=#{houseId}
+    </delete>
+    <select id="getPage" resultType="com.house.entity.House">
+        select * from house where houseType=#{houseType} and status='agree' order by houseId desc limit 30;
+    </select>
+    <select id="queryById" resultType="com.house.entity.House">
+        select * from house where houseId=#{houseId} limit 1;
+    </select>
+    <select id="search" resultType="com.house.entity.House">
+        select * from house where houseType=#{houseType} and address=#{address} and money<![CDATA[ <= ]]>#{max} and money<![CDATA[ >= ]]>#{min}
+                              and area<![CDATA[ <= ]]>#{max1} and area<![CDATA[ >= ]]>#{min1}  and status='agree' and introduction like #{key}
+    </select>
+    <select id="getLike" resultType="com.house.entity.House">
+        select * from house where houseId in (select houseId from favorite where userId=#{userId})
+    </select>
+    <select id="searchByArea" resultType="com.house.entity.House">
+        select * from house where houseType=#{houseType} and address=#{address} and money<![CDATA[ <= ]]>#{max} and money<![CDATA[ >= ]]>#{min}
+                              and area<![CDATA[ <= ]]>#{max1} and area<![CDATA[ >= ]]>#{min1} and status='agree' and introduction like #{key} order by area;
+    </select>
+    <select id="searchByPrice" resultType="com.house.entity.House">
+        select * from house where houseType=#{houseType} and address=#{address} and money<![CDATA[ <= ]]>#{max} and money<![CDATA[ >= ]]>#{min}
+                              and area<![CDATA[ <= ]]>#{max1} and area<![CDATA[ >= ]]>#{min1} and status='agree' and introduction like #{key} order by money;
+    </select>
+    <select id="getUsersAll" resultType="com.house.entity.House">
+        select * from house where userId=#{userId};
+    </select>
+    <select id="getPassing" resultType="com.house.entity.House">
+        select * from house where status='verify';
+    </select>
+</mapper>

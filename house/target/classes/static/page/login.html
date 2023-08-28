@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BDIC House Trade System</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+</head>
+<style>
+  body {
+    background-image: url("/images/house.jpg");
+    background-repeat: repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+</style>
+<body>
+<div class="ui container" style="padding: 20px;width: 400px;">
+  <div style="height: 35%;visibility: hidden"></div>
+  <div class="ui center aligned segment" style="background-color: rgba(255,255,255,0.3);">
+    <form class="ui form">
+      <div class="ui small image">
+        <img src="../images/logo.png" width="70" height="70" style="position:relative;left:40px;">
+      </div>
+      <div class="inline field" >
+        <div class="ui labeled icon input">
+          <i class="icon user"></i>
+          <input type="text" id="username"
+                 style="background-color: rgb(0,0,0,0.3);border:1px solid #F0F0F0;">
+        </div>
+      </div>
+      <div class="inline field">
+        <div class="ui labeled icon input">
+          <i class="icon lock"></i>
+          <input type="password" id="password"
+                 style="background-color:rgb(0,0,0,0.3);border:1px solid #F0F0F0;">
+        </div>
+      </div>
+      <button class="ui animated basic button" type="button" onclick="Login();">
+        <div class="visible content">login in</div>
+        <div class="hidden content">
+          <i class="right arrow icon"></i>
+        </div>
+      </button>
+      <button class="ui animated basic button" type="button" style="margin-left: 40px" onclick="Reg();">
+        <div class="visible content">sign in</div>
+        <div class="hidden content">
+          <i class="right plus icon"></i>
+        </div>
+      </button>
+    </form>
+  </div>
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+<script type="text/javascript">
+  function Login() {
+    const name = $("#username").val();
+    const pass = $("#password").val();
+    const formData = new FormData();
+    formData.append("username",name);
+    formData.append("password",pass);
+    console.log(formData);
+    $.ajax({
+      type: "POST",
+      url: '/user/check',
+      data: formData,
+      processData: false,
+      dataType:'json',
+      contentType: false,
+      cache: false,
+      success: function(data){
+        console.log(data);
+        if (data==1) {
+          window.location.replace("/user/toMain");
+        }
+        else {
+          alert("The id or password is wrong!!");
+          setTimeout(function(){
+            window.close();
+          },3000);
+        }
+      }
+    });
+  }
+  function Reg(){
+    window.location.replace("/user/reg");
+  }
+</script>
+</html>

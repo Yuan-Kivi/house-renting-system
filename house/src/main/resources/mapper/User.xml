@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.house.dao.UserDao">
+
+    <insert id="register">
+        insert into user (username,password,cell,email,avatar,userType,typeName)
+        values(#{username},#{password},#{cell},#{email},#{avatar},#{userType},#{typeName})
+    </insert>
+    <update id="change">
+        update user set
+          <if test="#{change}=='pass'">
+              password=#{value}
+          </if>
+        <if test="#{change}=='cell'">
+            cell=#{value}
+        </if>
+        <if test="#{change}=='email'">
+            email=#{value}
+        </if>
+        where userId=#{userId};
+    </update>
+    <update id="changePass">
+        update user set password=#{value} where userId=#{userId};
+    </update>
+    <update id="changeCell">
+        update user set cell=#{value} where userId=#{userId};
+    </update>
+    <update id="changeEmail">
+        update user set email=#{value} where userId=#{userId};
+    </update>
+    <update id="FOJ">
+        update user set status=#{sta} where userId=#{userId}
+    </update>
+
+    <select id="login" resultType="com.house.entity.User">
+        select * from user where username=#{username} and password=#{password} limit 1;
+    </select>
+    <select id="queryById" resultType="com.house.entity.User">
+        select * from user where userId=#{userId} limit 1;
+    </select>
+    <select id="getAll" resultType="com.house.entity.User">
+        select * from user where userId!=1;
+    </select>
+
+</mapper>

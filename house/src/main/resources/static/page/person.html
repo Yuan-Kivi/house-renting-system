@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+</head>
+<style>
+    #back{
+        width: 100%;
+        height: 70%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-image: url("/images/back.jpg");
+    }
+</style>
+<body>
+
+<div class="ui fixed secondary menu" style="padding-left: 20px;padding-right: 20px">
+    <div class="item header image">
+        <img src="http://localhost:8080/images/logo.png" alt="" style="width: 100px">
+    </div>
+    <a href="/user/toMain" class="item">Rent</a>
+    <a href="/user/toBuy" class="item">Buy</a>
+    <a href="/user/toCreate" class="item">Post</a>
+    <a href="/user/toLike" class="item">Like</a>
+    <div class="item right">
+        <div class="ui avatar image" style="margin-right: 20px">
+            <img th:src="${user.getAvatar()}" alt="">
+        </div>
+        <div class="ui text" >
+            <a href="/user/person" th:text="${user.getUsername()}" th:id="${user.getUserId()}"></a>
+        </div>
+    </div>
+</div>
+
+<div class="ui center aligned container" id="back">
+    <div style="height: 30%;visibility: hidden"></div>
+    <div class="ui massive image avatar">
+        <img th:src="${user.getAvatar()}">
+    </div>
+    <div style="margin-top: 100px">
+        <h2 class="ui header" th:text="${user.getUsername()}"></h2>
+        <div id="sign">
+            <span class="ui header" th:text="${user.getTypeName()}" style="font-size: 15px"></span>
+        </div>
+    </div>
+</div>
+
+<div class="ui center aligned container" style="margin-top: 20px">
+    <div class="ui segment">
+        <div class="ui horizontal divider">Information</div>
+        <div class="ui input sub" style="margin-top: 20px">
+            <label>Password:</label>
+            <input type="text" id="pass" style="width: 600px" th:placeholder="${user.getPassword()}">
+            <button class="ui button" onclick="change('pass')" style="margin-left: 20px">EDIT</button>
+        </div>
+        <div class="ui input sub" style="margin-top: 20px">
+            <label>Mobile Phone:</label>
+            <input type="number" id="cell" style="width: 600px" th:placeholder="${user.getCell()}">
+            <button class="ui button" onclick="change('cell')" style="margin-left: 20px">EDIT</button>
+        </div>
+
+        <div class="ui input sub" style="margin-top: 20px">
+            <label>Email:</label>
+            <input type="email" id="email" style="width: 600px" th:placeholder="${user.getEmail()}">
+            <button class="ui button" onclick="change('email')" style="margin-left: 20px">EDIT</button>
+        </div>
+    </div>
+
+    <div class="ui segment">
+        <div class="ui horizontal divider">House information</div>
+        <table class="ui center aligned celled table">
+            <thead>
+            <tr><th>Profile</th>
+                <th>Date</th>
+                <th>Area</th>
+                <th>Price</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Operation</th>
+            </tr></thead>
+            <tbody th:each="page:${pages}">
+            <tr>
+                <td><a th:href="'/house/see?houseId='+${page.getHouse().getHouseId()}" th:text="${page.getHouse().getIntroduction()}"></a></td>
+                <td th:text="${page.getHouse().getPubDate()}">24</td>
+                <td th:text="${page.getHouse().getArea()}+'m²'">Engineer</td>
+                <td th:text="${page.getHouse().getMoney()}+@{(${page.getHouse().getHouseType()}=='Sell')?'W':'/month'}">Engineer</td>
+                <td th:text="${page.getHouse().getHouseType()}">Engineer</td>
+                <td th:text="${page.getHouse().getStatus()}">has</td>
+                <td><button class="ui button delete" th:data_id="${page.getHouse().getHouseId()}"
+                           onclick="RR(this,this.getAttribute('data_id'))">DELETE</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="ui segment">
+        <div class="ui horizontal divider">Notification</div>
+        <table class="ui center aligned celled table">
+            <thead>
+            <tr><th>House title</th>
+                <th>Notification date</th>
+                <th>Notification content</th>
+                <th>Operation</th>
+            </tr></thead>
+            <tbody th:each="mess:${messages}">
+            <tr>
+                <td th:text="${mess.getIntro()}"></td>
+                <td th:text="${mess.getMDate()}">24</td>
+                <td th:text="${mess.getMess()}">24</td>
+                <td ><button class="ui button delete" th:data_id_j="${mess.getMId()}"
+                onclick="MOK(this,this.getAttribute('data_id_j'))">Read</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="ui segment">
+        <div class="ui horizontal divider">Report information</div>
+        <table class="ui center aligned celled table">
+            <thead>
+            <tr><th>House ID</th>
+                <th>House type</th>
+                <th>Report type</th>
+                <th>Report date</th>
+                <th>Report user ID</th>
+                <th>Report content</th>
+            </tr></thead>
+            <tbody th:each="comm:${coms}">
+            <tr>
+                <td><a th:href="'/house/see?houseId='+${comm.getHouse().getHouseId()}" th:text="${comm.getHouse().getHouseId()}"></a></td>
+                <td th:text="${comm.getHouse().getHouseType()}">24</td>
+                <td th:text="${comm.getComment().getCType()}">24</td>
+                <td th:text="${comm.getComment().getCDate()}">Engineer</td>
+                <td th:text="${comm.getUser().getUserId()}">Engineer</td>
+                <td th:text="${comm.getComment().getMessage()}">Engineer</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<br/><br/><br/><br/><br/>
+
+
+</body>
+<script src="../js/Person.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+<script>
+    function RR(obj,houseId){
+        obj.parentNode.parentNode.remove();
+        let formData = new FormData();
+        formData.append("houseId",houseId);
+        $.ajax({
+            type: "POST",
+            url: '/house/delete',
+            data: formData,
+            processData: false,
+            dataType:'json',
+            contentType: false,
+            cache: false,
+            success:function (data){
+                alert("DELETE SUCCESSFUL");
+                setTimeout(function(){
+                    window.close();
+                },3000);
+            }
+        });
+    }
+    function MOK(obj,mId){
+        obj.parentNode.parentNode.remove();
+        let formData = new FormData();
+        formData.append("mId",mId);
+        $.ajax({
+            type: "POST",
+            url: '/user/read',
+            data: formData,
+            processData: false,
+            dataType:'json',
+            contentType: false,
+            cache: false,
+        });
+    }
+    function change(id){
+        const val = $('#'+id).val();
+        var formData = new FormData();
+        formData.append("change",id);
+        formData.append("value",val);
+        $.ajax({
+                type: "POST",
+                url: '/user/change',
+                data: formData,
+                processData: false,
+                dataType:'json',
+                contentType: false,
+                cache: false,
+                success: function(data){
+                    alert("EDIT SUCCESSFUL");
+                    setTimeout(function(){
+                        window.close();
+                    },3000);
+                }
+            });
+    }
+</script>
+</html>

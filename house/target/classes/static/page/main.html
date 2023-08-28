@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>BDIC-HTS</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+</head>
+<body>
+
+<div class="ui secondary menu" style="padding-left: 20px;padding-right: 20px">
+    <div class="item header image">
+        <img src="http://localhost:8080/images/logo.png" alt="" style="width: 100px">
+    </div>
+    <a href="/user/toMain" class="active item" th:text="${user.getUserId()}==1?'Rent Management':'Rent'"></a>
+    <a href="/user/toBuy" class="item" th:text="${user.getUserId()}==1?'Sell Management':'Buy'">Buy</a>
+    <a href="/admin/manager" class="item" th:style="'display:'+@{(${user.getUserId()}!=1?'none':'inline')}+''">User management</a>
+    <a href="/user/toCreate" class="item" th:style="'display:'+@{(${user.getUserId()}==1?'none':'inline')}+''">Post</a>
+    <a href="/user/toLike" class="item" th:style="'display:'+@{(${user.getUserId()}==1?'none':'inline')}+''">Like</a>
+    <div class="item right">
+        <div class="ui avatar image" style="margin-right: 20px">
+            <img th:src="${user.getAvatar()}" alt="">
+        </div>
+        <div class="ui text" >
+            <a href="/user/person" th:text="${user.getUsername()}" th:id="${user.getUserId()}"></a>
+        </div>
+    </div>
+
+</div>
+
+<div class="ui container" style="padding:20px;">
+
+    <div class="ui segment">
+        <div class="ui form">
+            <div class="inline field" id="div_add">
+                <div class="ui fields">
+                    <labal>Destination</labal>
+                    <div class="field" style="margin-left: 7px">
+                        <!--省份选择-->
+                        <select id="prov" class="ui dropdown" onchange="showCity(this)">
+                            <option value="-1">Please select a state</option>
+                        </select>
+                    </div>
+                    <div class="field">
+
+                        <select id="city" class="ui dropdown" onchange="showCountry(this)">
+                            <option value="-1">Please select a city</option>
+                        </select>
+                    </div>
+                    <div class="field">
+
+                        <select id="country" class="ui dropdown" onchange="selecCountry(this)">
+                            <option value="-1">Please select a district</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="inline field">
+                <labal>Landlord</labal>
+                <select id="type" class="ui dropdown" style="width: 600px">
+                    <option value="Personal|Agency">Personal|Agency</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Agency">Agency</option>
+                </select>
+            </div>
+            <div class="inline field" id="div_money">
+                <labal>Price</labal>
+                <select id="range" class="ui dropdown" style="width: 200px">
+                    <option value="0-1000000">Unlimited</option>
+                    <option value="100-500">$100-$500/month</option>
+                    <option value="500-1000">$500-$1000/month</option>
+                    <option value="1000-2000">$1000-$2000/month</option>
+                    <option value="2000-10000">$2000-$10000/month</option>
+                </select>
+                <input type="number" id="min" style="width: 200px" placeholder="minimum">
+                <input type="number" id="max" style="width: 200px" placeholder="maximum">
+            </div>
+            <div class="inline field" id="div_area">
+                <labal>Area</labal>
+                <select id="areaRange" class="ui dropdown" style="width: 200px">
+                    <option value="0-1000000">Unlimited</option>
+                    <option value="10-20">10-20/㎡</option>
+                    <option value="20-40">20-40/㎡</option>
+                    <option value="40-80">40-80/㎡</option>
+                    <option value="80-200">80-200/㎡</option>
+                </select>
+                <input type="number" id="min1" style="width: 200px" placeholder="minimum">
+                <input type="number" id="max1" style="width: 200px" placeholder="maximum">
+            </div>
+            <div class="inline field">
+                <labal>Deposit</labal>
+                <select id="pre" class="ui dropdown" style="width: 600px">
+                    <option value="Bet one pays three|Bet one pays one">Bet one pays three|Bet one pays one</option>
+                    <option value="Bet one pays three">Bet one pays three</option>
+                    <option value="Bet one pays one">Bet one pays one</option>
+                </select>
+            </div>
+            <div class="inline field">
+                <labal>Towards</labal>
+                <select id="direction" class="ui dropdown" style="width: 600px">
+                    <option value="Unlimited">Unlimited</option>
+                    <option value="East">East</option>
+                    <option value="West">West</option>
+                    <option value="South">South</option>
+                    <option value="North">North</option>
+                </select>
+            </div>
+            <div class="required inline field">
+                <labal>Room</labal>
+                <select id="room" class="ui dropdown" style="width: 600px">
+                    <option value="Unlimited">Unlimited</option>
+                    <option value="One room">One room</option>
+                    <option value="Two rooms">Two rooms</option>
+                    <option value="Three rooms">Three rooms</option>
+                    <option value="Four rooms">Four rooms</option>
+                </select>
+            </div>
+            <div class="required inline field">
+                <labal>Sort</labal>
+                <select id="sort" class="ui dropdown" style="width: 600px">
+                    <option value="Newest">Newest</option>
+                    <option value="Price">Price</option>
+                    <option value="Area">Area</option>
+                </select>
+            </div>
+            <div class="inline field">
+                <labal>Search</labal>
+                <input type="text" id="key" style="width: 600px" placeholder="Key word search|the Statue of Liberty">
+                <button class="ui item animated button" onclick="doSearch();" style="margin-left: 30px">
+                    <div class="visible content">Search</div>
+                    <div class="hidden content">
+                        <i class="right search icon"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="ui segment rewrite" th:fragment="write">
+        <div class="ui relaxed divided items" style="padding-left: 10px;padding-right: 10px" th:each="page:${pages}">
+            <div class="item">
+                <a th:href="'/house/see?houseId='+${page.getHouse().getHouseId()}" class="image">
+                    <img th:src="${page.getPics()[0].getUrl()}" alt="">
+                </a>
+                <div class="middle aligned content">
+                    <a th:href="'/house/see?houseId='+${page.getHouse().getHouseId()}" class="header"
+                       th:text="${page.getHouse().getMoney()}+@{(${page.getHouse().getHouseType()}=='Sell')?'W':'/month'}"></a>
+                    <div class="meta" th:text="${page.getUser().getUsername()}+'&nbsp;&nbsp;—&nbsp;&nbsp;'+${page.getUser().getTypeName()}+
+                            '&nbsp;&nbsp;—&nbsp;&nbsp;'+${page.getHouse().getPubDate()}"></div>
+                    <div class="description" th:text="${page.getHouse().getIntroduction()}"></div>
+                    <div class="extra">
+                        <span>Destinations&nbsp;</span><span th:text="${page.getHouse().getAddress()}+'—&nbsp;&nbsp'+${page.getHouse().getLoc()}"></span>
+                        <span class="right floated">
+                            <a href="#"
+                               th:id="${page.getHouse().getHouseId()}"
+                               th:data_userId="${page.getHouse().getUserId()}"
+                               th:value="${page.getLike().intValue()}"
+                               onclick="Like(this.getAttribute('data_userId'),
+                               this.getAttribute('id'),this.getAttribute('value'))">
+                                <i class="icon like" th:classappend="${page.getLike().intValue()==1}?' red':''"
+                                   th:style="'display:'+@{(${user.getUserId()}==1?'none':'inline')}+''"
+                                   th:id="${page.getHouse().getHouseId()}+'_icon'"></i></a>
+                            <span style="margin-left: 10px;margin-right: 10px" th:text="${page.getHouse().getViews()}"></span>views
+                            <i class="icon eye" ></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--底部栏-->
+<footer class="ui inverted segment vertical">
+    <div class="ui container" style="padding:20px;margin: 10px">
+        <div class="ui center aligned inverted divided grid">
+            <div class="six wide column">
+                <div class="ui inverted link list">
+                    <h class="ui inverted header">——Newest Policy——</h>
+                    <a href=""
+                       class="item" style="margin-top: 5px">New York rent discount policy</a>
+                    <a href=""
+                       class="item" style="margin-top: 5px">Los Angeles house trade management</a>
+                    <a href=""
+                       class="item" style="margin-top: 5px">Houston student rent policy</a>
+                </div>
+            </div>
+            <div class="four wide column">
+                <div class="ui inverted link list">
+                    <a class="ui inverted header">——Contact us——</a>
+                    <a href="" class="item" style="margin-top: 8px">Cell:18512344321</a>
+                    <a href="" class="item" style="margin-top: 8px">Mail:email@email.cn</a>
+                </div>
+            </div>
+            <div class="five wide column">
+                <div class="ui inverted link list">
+                    <h class="ui inverted header">——Copyright——</h>
+                    <a href="" class="item" style="margin-top: 5px">Copyright number</a>
+                    <a href="" class="item" style="margin-top: 5px">Copyright company</a>
+                    <a href="" class="item" style="margin-top: 5px">Privacy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+</body>
+<script src="../js/city.js"></script>
+<script src="../js/method.js"></script>
+<script src="../js/Person.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+<script type="text/javascript">
+    let text=""
+    $('select.dropdown').dropdown();
+    $("#furn").change(function(){
+        text=$("#furn option:selected").text()
+    })
+    window.onload=function (){
+        var t=document.getElementById("min");
+        t.value=0;
+        t=document.getElementById("max");
+        t.value=1000000;
+        t=document.getElementById("min1");
+        t.value=0;
+        t=document.getElementById("max1");
+        t.value=1000000;
+    }
+
+    $("#range").change(function(){
+        text=$("#range option:selected").val()
+        var split = text.split("-");
+        var t=document.getElementById("min");
+        t.value=Number(split[0]);
+        t=document.getElementById("max");
+        t.value=Number(split[1]);
+    })
+
+    $("#areaRange").change(function(){
+        text=$("#areaRange option:selected").val()
+        var split = text.split("-");
+        var t=document.getElementById("min1");
+        t.value=Number(split[0]);
+        t=document.getElementById("max1");
+        t.value=Number(split[1]);
+    })
+
+    function Like(userId,houseId,like){
+        let ele=document.getElementById(houseId);
+        if (ele.getAttribute("value")=="0"){
+            ele.setAttribute("value","1");
+            $('#'+houseId+'_icon').toggleClass("red");
+        }else {
+            ele.setAttribute("value","0");
+            $('#'+houseId+'_icon').removeClass("red");
+        }
+        let formData = new FormData();
+        formData.append("houseId",houseId);
+        formData.append("like",like);
+        $.ajax({
+            type: "POST",
+            url: '/house/like',
+            data: formData,
+            processData: false,
+            dataType:'json',
+            contentType: false,
+            cache: false,
+        });
+    }
+    function doSearch(){
+        const add = $("#prov option:selected").text()+"."+$("#city option:selected").text()+"."+$("#country option:selected").text();
+        if(check($("#country").val()==-1,"#div_add"))return;
+        const type = $("#type option:selected").val();
+        let bool=($("#min").val()=="")|| ($("#max").val()=="")||(Number($("#min").val())<0)||
+            (Number($("#max").val())<0)|| (Number($("#min").val())>=Number($("#max").val()))
+        if(check(bool,"#div_money"))return;
+        let bool2=($("#min1").val()=="")|| ($("#max1").val()=="")||(Number($("#min1").val())<0)||
+            (Number($("#max1").val())<0)|| (Number($("#min1").val())>=Number($("#max1").val()))
+        if(check(bool2,"#div_area"))return;
+        const pre = $("#pre option:selected").val();
+        let key = $("#key").val();
+        let formData = new FormData();
+        formData.append("address",add);
+        formData.append("userType",type);
+        formData.append("min",Number($("#min").val()));
+        formData.append("max",Number($("#max").val()));
+        formData.append("min1",Number($("#min1").val()));
+        formData.append("max1",Number($("#max1").val()));
+        formData.append("pre",pre);
+        formData.append("key",key);
+        formData.append("direction",$("#direction option:selected").val());
+        formData.append("room",$("#room option:selected").val());
+        formData.append("sort",$("#sort option:selected").val());
+        formData.append("houseType","Rent");
+        $.ajax({
+            type: "POST",
+            url: '/house/put',
+            data: formData,
+            processData: false,
+            dataType:'json',
+            contentType: false,
+            cache: false,
+            success: function(data){
+                console.log(data);
+                $(".rewrite").load("/house/search");
+            }
+        });
+
+    }
+    function check(bool,str2) {
+        if(bool){
+            if(!($(str2).hasClass("error"))){
+                $(str2).toggleClass("error");
+            }
+            return true;
+        }
+        else{
+            if(($(str2).hasClass("error"))){
+                $(str2).removeClass("error");
+            }
+        }
+        return false;
+    }
+</script>
+</html>
